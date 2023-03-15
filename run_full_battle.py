@@ -922,7 +922,6 @@ def combat(enermies_lst):
             
 
 
-combat(en_lst)
 
 
 
