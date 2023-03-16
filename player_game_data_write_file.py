@@ -8,7 +8,7 @@ items = [{'name': 'ball', 'description': 'round object used for fun', 'combat_ch
 
 effects = [{'name': 'burn', 'description': 'hot flame applied to skin', 'effects': {'type': 'damage', 'impact': 5}}]
 
-player_data = {'name': 'jeff','level': 1, 'hp': 10, 'a_p': 10, 'd_p': 40, 's_p': 0, 'aim': 50, 'items': ['ball', 'great vibes'], 'attacks': ['Scratch'], 'max_hp': 10}
+player_data = {'name': 'jeff','level': 1, 'location': 'Desert', 'hp': 10, 'a_p': 10, 'd_p': 40, 's_p': 0, 'aim': 50, 'items': ['ball', 'great vibes'], 'attacks': ['Scratch'], 'max_hp': 10}
 
 ai_personality_types = ['timid', 'aggressive', 'smart', 'resourceful', 'wild', 'average']
 
