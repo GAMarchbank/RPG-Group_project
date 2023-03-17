@@ -15,7 +15,7 @@ import random
 
 #---------------------------------------------
 
-# Below is the level calculator (crude, i know)
+# Below is the enemy level calculator. It generates an enemy level in the approximate region of the player's with a rough bell-curve distribution.
 
 
 def enemy_level_calculator(player_level):
@@ -103,7 +103,7 @@ def enemy_stat_calculator():
     
     #---------------------------------------------------------------------------------------------------
         
-    # (2) I suppose at some point the "monster_locations dict" (see below) should go to the game_data.txt file 
+    # I suppose at some point the "monster_locations dict" (see below) should go to the game_data.txt file....but it is here for now
         
     monster_locations_dict = {
     
@@ -157,25 +157,19 @@ def enemy_stat_calculator():
     return enemy_stats
 
 
-
 """
-This next section executes the enemy_stat_calculator, the result of which is named "enemy_stat_calculator_executed".
-This dictionary is then inserted as a value in a new dictionary called "enemy_stats_for_JSON_file", with the key being "enermies".
-This is appended onto the "game_data.txt" file.
-
-Note: Can only be run ONCE, then causes a syntax error. Then the "enermies" dictionary has to be removed manually from the 
-"game_data.txt" files.
+The final section opens the "game_data.txt" file and alters the value of the "enemies" key from "[]" to the 
+results of the executed enemy_stat_calcualtor.
 
 """
 
 enemy_stat_calculator_executed = enemy_stat_calculator()
 
 
-enemy_stats_for_JSON_file = {"enermies":(enemy_stat_calculator_executed)}
-
-
-with open('game_data.txt', 'a') as f:
-    f.write('\n')
-    f.write('\n')
-    json.dump(enemy_stats_for_JSON_file, f)
-    f.write('\n')
+with open('game_data.txt', 'r') as infile:
+    data = json.load(infile)
+    
+data["enemies"] = enemy_stat_calculator_executed
+    
+with open('game_data.txt', 'w') as outfile:
+    json.dump(data, outfile)
