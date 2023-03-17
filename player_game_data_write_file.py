@@ -13,7 +13,7 @@ player_data = {'name': 'jeff','level': 1, 'location': 'Desert', 'hp': 10, 'a_p':
 ai_personality_types = ['timid', 'aggressive', 'smart', 'resourceful', 'wild', 'average']
 
 
-game_data = {'attacks': attacks, 'items': items, 'effects': effects, 'personality_types': ai_personality_types}
+game_data = {'attacks': attacks, 'items': items, 'effects': effects, 'personality_types': ai_personality_types, 'enemies': []}
 
 p_d = json.dumps(player_data)
 g_d = json.dumps(game_data)
