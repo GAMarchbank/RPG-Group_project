@@ -900,9 +900,6 @@ def combat(enermies_lst):
                                         
                                 
 
-                        
-# still not working, now wont let the player leave the battle when all of the enermies are no longer present
-                    
 
 
 
