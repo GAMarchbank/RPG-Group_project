@@ -41,5 +41,3 @@ def inventory_edit():
         file.write(game_data)
         
     return ret_item
-
-print(inventory_edit())
