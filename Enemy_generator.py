@@ -12,16 +12,15 @@ This enemy stat calculator consists of
 
 import json
 import random
+from items_generator import inventory_edit
+from copy import deepcopy
 
 #---------------------------------------------
 
 # Below is the enemy level calculator. It generates an enemy level in the approximate region of the player's with a rough bell-curve distribution.
-
+# G - I have left unchanged. possible will need updating as currenlty will break when player level is over 10, maybe tie the random choice list to being directly created by the player level. not importatnt now
 
 def enemy_level_calculator(player_level):
-        
-    
-    
     if player_level == 1:
         enemy_level = 1
     elif player_level >= 2 and player_level <= 3:
@@ -36,35 +35,29 @@ def enemy_level_calculator(player_level):
         enemy_level = random.choice([8,9,9,10,10,10])
     else:
         print("Error calculating enemy strength.")
-    
     return enemy_level
 
 
 # below is the loot calculator. It calculates the loot drop based upon a "base" drop chance for each item multiplied by the enemy level
-    
-def loot_calculator(enemy_level):
-    
-    drop_base_probability = {"Gold Coin":2,"Silver Coin":4, "Bronze Coin":8,"Healing potion":4,"Greater Healing potion":1}
-        
-    lootlist = list()
-    
-    
-    for item in drop_base_probability:
-        
-        probability_calculator = drop_base_probability.get(item)
-    
-        probability_score = (int(probability_calculator) * int(enemy_level))
-        
-        num_generator = random.randint(0,100)
-        if num_generator >= probability_score:
-            pass
-        else:
-            lootlist.append(item)
-    
-    if bool(lootlist) == False:
-        lootlist = ["None"]
-    else:
-        return lootlist
+# G - have edited so the items are taken from the item generator, have removed the loot submenu as the loot will just be the items that are left from each account. we can add some form of currency if we choose to add that to the game later. 
+
+def item_calculator():
+    prob_lst = [0,1,2,3,4,5,6]
+    rev_prob_lst = deepcopy(prob_lst)
+    rev_prob_lst = list(reversed(rev_prob_lst))
+    chance_lst = []
+    for items in prob_lst:
+        num = rev_prob_lst[prob_lst.index(items)]
+        while num != 0:
+            chance_lst.append(items)
+            num -= 1
+    item_amount = random.choice(chance_lst)
+    items_list = []
+    while item_amount != 0:
+        item = inventory_edit()
+        items_list.append(item)
+        item_amount -= 1
+    return items_list
     
 """
 Below is the enemy stat calculator. It currently has 3 functions:
@@ -79,17 +72,17 @@ def enemy_stat_calculator():
         
     # This segment parses the "player_data.txt" file for the playerstats_dict and pulls the player's level and location
 
-    with open('player_data.txt') as json_file:
+    with open('player_data.txt', 'r') as json_file:
         playerstats = json.load(json_file)
     
     player_level = playerstats.get('level')
 
-
+    # G- will change this when game is loaded to be take directly from the map as it in in play
     player_location = playerstats.get('location')
 
     # This section parses the "game_data.txt" file for the "personality" list:    
 
-    with open ('game_data.txt') as json_file:
+    with open ('game_data.txt', 'r') as json_file:
         gamedata = json.load(json_file)
     
     
@@ -99,12 +92,14 @@ def enemy_stat_calculator():
 
     attacks = gamedata.get("attacks")
     
-    items = gamedata.get("items")
+    # G- Changed to be taken directly form the itemscalc function, what what the loot funct function
+    items = item_calculator()
     
     #---------------------------------------------------------------------------------------------------
         
     # I suppose at some point the "monster_locations dict" (see below) should go to the game_data.txt file....but it is here for now
-        
+    # G - we can put this into the game data when the map has been written, till now this will do. should also think about putting more data into here so its ties to what attacks or data each enermy can have, though that might just be complxity for hte sake of complexity
+   
     monster_locations_dict = {
     
     "Desert" : ["Scarab Beetle","Scorpion", "Giant Sandworm"],
@@ -129,7 +124,7 @@ def enemy_stat_calculator():
     These placeholder enemy stat calculations (aside from enemy level) are deliberately basic until a better system is decided
     upon.
     """
-
+    # G - have left unedited untill we come to balencing the game
 
     enemy_level = enemy_level_calculator(player_level)
     
@@ -151,8 +146,14 @@ def enemy_stat_calculator():
                    "d_p": defencepoints,
                    "s_p": speedpoints,
                    "aim": aim,
-                   "attacks": attacks,
-                   "loot": loot_calculator(enemy_level),}
+                   "attacks": attacks}
+                   
+    gamedata['enemies'].append(enemy_stats)
+    game_data = json.dumps(gamedata)
+    
+    
+    with open('game_data.txt', 'w')as file:
+        file.write(game_data)    
     
     return enemy_stats
 
@@ -163,13 +164,4 @@ results of the executed enemy_stat_calcualtor.
 
 """
 
-enemy_stat_calculator_executed = enemy_stat_calculator()
-
-
-with open('game_data.txt', 'r') as infile:
-    data = json.load(infile)
-    
-data["enemies"] = enemy_stat_calculator_executed
-    
-with open('game_data.txt', 'w') as outfile:
-    json.dump(data, outfile)
+# G - I have moved this section up to be contained within the function 
