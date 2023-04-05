@@ -90,7 +90,10 @@ def enemy_stat_calculator():
 
     personality = random.choice(personality_list)
 
-    attacks = gamedata.get("attacks")
+    attacks = []
+    attack = gamedata["attacks"]
+    for items in attack:
+        attacks.append(items['name'])
     
     # G- Changed to be taken directly form the itemscalc function, what what the loot funct function
     items = item_calculator()
