@@ -4,16 +4,6 @@ import time
 from statistics import mean
 
 
-# hey guys. 
-# run other_data_save_types.py first, it will create the necessary json files.
-# the whole thing returns False if you lose and True if you win. 
-# it saves all other data back to the player_data.txt file
-# these used to be two files but ive combined them to upload here.
-# when we use this in the program ill delect the final line where the code is called. 
-
-
-# just an enemy example to run with the program
-en_lst = [{"name": "Scorpion", "level": 2, "Location": "Desert", "items": ['great vibes'], "hp": 7, "a_p": 2, "d_p": 2, 's_p': 10, 'aim': 20, "attacks": ['Scratch'], 'personality': 'wild'}, {"name": "Scorpion", "level": 2, "Location": "Desert", "items": ['great vibes'], "hp": 7, "a_p": 2, "d_p": 2, 's_p': 10, 'aim': 20, "attacks": ['Scratch'], 'personality': 'average'}]
 
 # this is the class which will be used to run both sides of the combat
 class Battle_Class:
@@ -176,7 +166,7 @@ class Battle_Class:
         
     
     # lets the player choose what attack they want to use and returns the sepefic data for that attack
-    def gen_player_attack(self):
+    def gen_player_attack(self, escape = True):
         with open('game_data.txt', 'r') as file:
             game_data = file.read()
         game_data = json.loads(game_data)
@@ -198,14 +188,15 @@ class Battle_Class:
                         attack_dict[num] = atta
                         print('\n')
                         num += 1
-            print("\tb:\tBack")
+            if escape == True:
+                print("\tb:\tBack")
             attack_choice = input('Please make your selection?\t')
             try:
                 if int(attack_choice) not in range(1, num):
                     print('Unrecognised entry')
                     continue
             except Exception:
-                if attack_choice.lower() != 'b':
+                if attack_choice.lower() != 'b' or escape == False:
                     print('Unrecognised entry')
                     continue
             if attack_choice == 'b':
@@ -224,31 +215,31 @@ class Battle_Class:
     def gen_attack_damage(self, attack_dic, personality = 'player'):
         print(f"{self.name} tries to use {attack_dic['name']}.")
         if personality in ['player', 'average', 'resourceful']:
-            damage = self.ap * attack_dic['attack_modifer']
+            damage = round(self.ap * attack_dic['attack_modifer'])
             damage = random.randrange(damage - 10, damage + 10)
             if damage < 0:
                 damage = 0
             aim = random.randrange(self.aim - 5, self.aim + 5)
         elif personality == 'aggressive':
-            damage = self.ap * (attack_dic['attack_modifer'] + 0.5 )
+            damage = round(self.ap * (attack_dic['attack_modifer'] + 0.5 ))
             damage = random.randrange(damage - 10, damage + 10)
             if damage < 0:
                 damage = 0
             aim = random.randrange(self.aim - 5, self.aim +5)
         elif personality == 'wild':
-            damage = self.ap * attack_dic['attack_modifer']
+            damage = round(self.ap * attack_dic['attack_modifer'])
             damage = random.randrange(damage-25, damage + 25)
             if damage < 0:
                 damage = 0
             aim = random.randrange(self.aim -10, self.aim +10)
         elif personality == 'smart':
-            damage = self.ap * attack_dic['attack_modifer']
+            damage = round(self.ap * attack_dic['attack_modifer'])
             damage = random.randrange(damage-5, damage+5)
             if damage < 0:
                 damage = 0
             aim = random.randrange(self.aim -5, self.aim +15)
         elif personality == 'timid':
-            damage = self.ap * attack_dic['attack_modifer']
+            damage = round(self.ap * attack_dic['attack_modifer'])
             damage = random.randrange(damage -10, damage +15)
             if damage < 0:
                 damage = 0
@@ -399,11 +390,16 @@ class Battle_Class:
                 for items in it_lst:
                     if items['effects']['type'] == 'healing' and items['effects']['impact'] >= self.max_hp - self.current_hp:
                         return items
+                    elif items['effects']['type'] in ['defence', 'attack']:
+                        return items
             else:
                 trim = self.enemy_item_gen('average')
                 return trim
         
-
+        
+        
+        # edit to make enemy personalities work
+        
     # applies effect of the item
     def apply_item(self, item_dic):
         print(f"{self.name} uses {item_dic['name']}.")
@@ -416,6 +412,21 @@ class Battle_Class:
                 self.current_hp = self.max_hp
             elif self.current_hp < 0:
                 self.current_hp = 0
+        elif item_dic['effects']['type'] == 'clensing':
+            if len(self.effects_lst) != 0:
+                for items in self.effects_lst:
+                    print(f"{self.name} has been cured of {items['name']}.")
+                self.effects_lst = []
+            else:
+                print(f'{self.name} has nothing to be cured from.')
+        elif item_dic['effects']['type'] == 'attack':
+            print(f"{self.name}'s attack has been boasted.")
+            self.ap = self.ap + item_dic['effects']['impact']
+        elif item_dic['effects']['type'] == 'defence':
+            print(f"{self.name}'s defence has been boaster.")
+            self.dp = self.dp + item_dic['effects']['impact']
+        elif item_dic['effects']['type'] in ['effects','damage']:
+            return 'area_effects'
     
     # checks if the combatee stil has hp
     def check_if_alive(self):
@@ -531,6 +542,21 @@ class Battle_Class:
         if self.current_hp < self.max_hp * 0.25:
             choice_lst.append(3)
         return random.choice(choice_lst)
+    
+    def regain_health(self, health):
+        print(f"{self.name} gained {health} hp.")
+        self.current_hp += health
+        if self.current_hp > self.max_hp:
+            self.current_hp = self.max_hp
+    
+    def apply_effect(self, effect):
+        if effect == 'sleep':
+            self.effects_lst.append({'name': effect, 'remaining turns': 1, 'effects': {'type': 'skip_go', 'impact': None}})
+        elif effect == 'poison':
+            self.effects_lst.append({'name': effect, 'remaining turns': 3, 'effects': {'type': 'damage', 'impact': 6}})
+        elif effect == 'burn':
+            self.effects_lst.append({'name': effect, 'remaining turns': 3, 'effects': {'type': 'damage', 'impact': 5}})
+        
         
     
 # here the main body of the code starts
@@ -602,7 +628,8 @@ def combat(enermies_lst):
                 bar = bar + '-'
             print(f"\n{bar}\n{entities.return_name()}'s turn.\n{bar}\n\n")
             # the next two lines enact any effects the instance has on it, and apply the skip_go modifier if relivant, they also check the status of the enemy, weather it is alive or has escaped
-            skip_go_indicator = entities.action_events()
+            if entities.return_status() == 'alive':
+                skip_go_indicator = entities.action_events()
             if skip_go_indicator != False and entities.return_status() == 'alive':
                 # here it filters to see if this is the player or an enemy
                 if entities.return_is_plyer() == True:
@@ -701,12 +728,54 @@ def combat(enermies_lst):
                                 continue
                             else:
                                 # the next few lines open the item selection menu and then apply that item
-                                item_data = entities.chose_items_player()
-                                if item_data == False:
+                                item = entities.chose_items_player()
+                                if item == False:
                                     continue
-                                item = entities.apply_item(item_data)
-                                if item == 'escape':
+                                item_data = entities.apply_item(item)
+                                if item_data == 'escape':
                                     battle_escape = True
+                                elif item_data == 'area_effects': 
+                                    item_effect_lst = []
+                                    for humans in encounter_class_lst:    
+                                        if (item['effects']['type'] == 'damage' or item['effects']['impact'] in ['poison', 'sleep', 'burn']) and humans.return_is_plyer() == False:
+                                            item_effect_lst.append(humans)
+                                        elif item['effects']['impact'] == 'healing' and humans.return_is_plyer() == True:
+                                            item_effect_lst.append(humans)
+                                    for humans in item_effect_lst:
+                                        if item['effects']['type'] == 'damage':
+                                            print(f"the {item['name']} hurts {humans.return_name()}.")
+                                            att_dic= {'effect': None, 'damage': item['effects']['mod']}
+                                            humans.take_damage(att_dic)
+                                        elif item['effects']['impact'] == 'healing':
+                                            print(f"{humans.return_name()} is affected by {item['name']}.")
+                                            humans.regain_health(item['effects']['mod'])
+                                    if item['effects']['impact'] in ['poison', 'sleep', 'burn']:
+                                        chance = round(item['effects']['mod'] * 0.5)
+                                        if chance < 1:
+                                            chance = 1
+                                        if chance > len(item_effect_lst):
+                                            chance = len(item_effect_lst)
+                                        effect_lst = []
+                                        while chance != 0:
+                                            choice_char = random.choice(item_effect_lst)
+                                            if choice_char in effect_lst:
+                                                continue
+                                            else:
+                                                effect_lst.append(choice_char)
+                                                chance -= 1
+                                        for humans in item_effect_lst:
+                                            if humans not in effect_lst:
+                                                print(f"{humans.return_name()} avoided the {item['name']}")
+                                            else:
+                                                print(f"{humans.return_name()} was hit by the {item['name']}")
+                                                humans.apply_effect(item['effects']['impact'])
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
                         # this main_menu_choice attempts to flee the battle
                         elif int(main_menu_choice) == 3:
                             while True:
@@ -822,6 +891,107 @@ def combat(enermies_lst):
                             if escape == 'escape':
                                 print(f'{entities.return_name()} escaped')
                                 entities.set_status(1)
+                                
+                                
+                            elif escape == 'area_effects': 
+                                item_effect_lst = []
+                                for humans in encounter_class_lst:
+                                    if (item['effects']['type'] == 'damage' or item['effects']['impact'] in ['poison', 'sleep', 'burn']) and humans.return_is_plyer() == True:
+                                        item_effect_lst.append(humans)
+                                    elif item['effects']['impact'] == 'healing' and humans.return_is_plyer() == False:
+                                        item_effect_lst.append(humans)
+                                for humans in item_effect_lst:
+                                    if item['effect']['type'] == 'damage':
+                                        print(f"the {item['name']} hurts {humans.return_name()}.")
+                                        att_dic= {'effects': None, 'damage': item['effects']['mod']}
+                                        humans.take_damage(att_dic)
+                                    elif item['effects']['impact'] == 'healing':
+                                        print(f"{humans.return_name()} is affected by {item['name']}.")
+                                        humans.regain_health(item['effects']['mod'])
+                                if item['effects']['impact'] in ['poison', 'sleep', 'burn']:
+                                    chance = round(item['effects']['mod'] * 0.5)
+                                    if chance < 1:
+                                        chance = 1
+                                    if chance > len(item_effect_lst):
+                                        chance = len(item_effect_lst)
+                                    effect_lst = []
+                                    while chance != 0:
+                                        choice_char = random.choice(item_effect_lst)
+                                        if choice_char in effect_lst:
+                                            continue
+                                        else:
+                                            effect_lst.append(choice_char)
+                                            chance -= 1
+                                    for humans in item_effect_lst:
+                                        if humans not in effect_lst:
+                                            print(f"{humans.return_name()} avoided the {item['name']}")
+                                        else:
+                                            print(f"{humans.return_name()} was hit by the {item['name']}")
+                                            humans.apply_effect(item['effects']['impact'])
+        
+                                                
+                                                
+                                             
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                    
+                                            
+                                            
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
 
                         # here the enemy attepts to flee/ contesting its speed with yours. its likelyhood of picking this option depends on its personality
                         elif main_menu_choice == 3:
@@ -835,7 +1005,7 @@ def combat(enermies_lst):
                                     # if the enemy is caught you get a free attack
                                     if players.escape_calc(speed) == False:
                                         print(f'{players.return_name()} caught them.')
-                                        attack = players.gen_player_attack()
+                                        attack = players.gen_player_attack(False)
                                         attack = players.gen_attack_damage(attack)
                                         def_dic = entities.gen_defense(attack)
                                         time.sleep(3)

@@ -55,7 +55,7 @@ def item_calculator():
     items_list = []
     while item_amount != 0:
         item = inventory_edit()
-        items_list.append(item)
+        items_list.append(item['name'])
         item_amount -= 1
     return items_list
     

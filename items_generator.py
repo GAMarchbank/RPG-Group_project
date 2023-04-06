@@ -12,7 +12,7 @@ def inventory_edit():
                     'attack':{'words': [{'name': 'Strengthening', 'mod': 1, 'rare': 6, 'type': 'attack'}, {'name':'Enraging', 'mod': 2, 'rare': 3, 'type': 'attack'}, {'name':'Blood', 'mod': 3, 'rare': 1, 'type': 'attack'}], 'colour': 'Red'}, 
                     'defence': {'words':[{'name': 'Iron', 'mod': 3, 'rare': 1, 'type': 'defence'}, {'name': 'Stone', 'mod': 2, 'rare': 3, 'type': 'defence'}, {'name':'Protective', 'mod': 1, 'rare': 6, 'type': 'defence'}], 'colour': 'Blue'}, 
                     'cleansing': {'words': [{'name': 'Purifying', 'mod': 0, 'rare': 4, 'type': 'clensing'}, {'name': 'Purging', 'mod': 0, 'rare': 4, 'type': 'clensing'}], 'colour': 'Yellow'}, 
-                    'area_effects': [{'name': 'Poison', 'colour': 'Green', 'rare': 2, 'type': 'poison'}, {'name': 'Soporific', 'colour': 'Purple', 'rare': 2, 'type': 'sleep'}, {'name': 'Acid', 'colour': 'Yellow', 'rare': 2, 'type': 'damage', 'mod': 1}, {'name': 'Explosive', 'colour': 'Red', 'rare': 1, 'type': 'damage', 'mod': 3}, {'name': 'Healing', 'colour': 'Blue', 'rare': 2, 'type': 'healing'}, {'name': 'Sharp', 'colour': 'Spikey', 'rare': 2, 'type': 'damage', 'mod': 2}], 
+                    'area_effects': [{'name': 'Poison', 'colour': 'Green', 'rare': 2, 'type': 'poison'}, {'name': 'Soporific', 'colour': 'Purple', 'rare': 2, 'type': 'sleep'}, {'name': 'Acid', 'colour': 'Yellow', 'rare': 2, 'type': 'burn', 'mod': 1}, {'name': 'Explosive', 'colour': 'Red', 'rare': 1, 'type': 'damage', 'mod': 3}, {'name': 'Healing', 'colour': 'Blue', 'rare': 2, 'type': 'healing'}, {'name': 'Sharp', 'colour': 'Spikey', 'rare': 2, 'type': 'damage', 'mod': 2}], 
                     'area_effect_mods': [{'name': 'Insignificant', 'mod': 1, 'rare': 7}, {'name': 'Unstable', 'mod': 2, 'rare': 5}, {'name': 'Advanced', 'mod': 3, 'rare': 3},{'name': 'Atomic', 'mod': 4, 'rare': 1}]}
     
     desc_mod_lst = {'all': ['healing', 'attack', 'defence', 'cleansing'], 'defence': ['defence'], 'attack': ['attack'], 'healing': ['healing'], 'cleansing': ['cleansing']}
@@ -59,7 +59,7 @@ def inventory_edit():
         else:
             effects = 'effects'
             impact = des_choice[0]['type']
-        output_dic = {'name': des_choice[1]['name'] + ' ' + des_choice[0]['colour'] + ' ' + name_choice['name'], 'description': description, 'combat_check': True, 'effects': {'type': effects, 'impact': impact}}     
+        output_dic = {'name': des_choice[1]['name'] + ' ' + des_choice[0]['colour'] + ' ' + name_choice['name'], 'description': description, 'combat_check': True, 'effects': {'type': effects, 'impact': impact, 'mod': name_choice['mod'] * des_choice[1]['mod']}}     
         
     else:
         output_dic = {'name': name_choice['name'], 'description': name_choice['desc'], 'combat_check': True, 'effects': {'type': 'escape', 'impact': None}}
@@ -81,4 +81,3 @@ def inventory_edit():
             file.write(game_data)
         
     return output_dic
-
