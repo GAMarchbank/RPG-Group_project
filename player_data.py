@@ -1,0 +1,1 @@
+{"name": "jeff", "level": 1, "hp": 10, "a_p": 1, "d_p": 40, "s_p": 0, "aim": 50, "items": ["ball", "great vibes"], "attacks": ["Scratch"], "max_hp": 10}
