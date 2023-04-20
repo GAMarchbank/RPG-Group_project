@@ -15,3 +15,12 @@ George Inkpen
 Fabian Byran
 
 Justin Grant 
+
+
+Things to still be done.
+
+Attack generator
+quest generator
+full flesh out enemies
+Put code together
+balence enermy stats

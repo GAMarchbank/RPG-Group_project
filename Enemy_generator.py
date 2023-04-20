@@ -67,7 +67,7 @@ Below is the enemy stat calculator. It currently has 3 functions:
 
 """
 
-def enemy_stat_calculator():
+def enemy_stat_calculator(location):
       
         
     # This segment parses the "player_data.txt" file for the playerstats_dict and pulls the player's level and location
@@ -77,8 +77,8 @@ def enemy_stat_calculator():
     
     player_level = playerstats.get('level')
 
-    # G- will change this when game is loaded to be take directly from the map as it in in play
-    player_location = playerstats.get('location')
+    # # G- will change this when game is loaded to be take directly from the map as it in in play
+    # player_location = playerstats.get('location')
 
     # This section parses the "game_data.txt" file for the "personality" list:    
 
@@ -107,18 +107,26 @@ def enemy_stat_calculator():
     
     "Desert" : ["Scarab Beetle","Scorpion", "Giant Sandworm"],
     
-    "Haunted Castle" : ["Possessed Armour", "Ghost","Gargoyle"],
+    "Urban" : ["Possessed Object", "Ghost", "Gargoyle", "Angery Citizen"],
     
-    "Swamp" : ["Goblin", "Living Slime", "Witch"],
+    "Wetlands" : ["Goblin", "Living Slime", "Witch"],
     
-    "Forest" : ["Spider", "Ogre", "Carnivorous Tree"]
+    "Temperate Woodlands" : ["Spider", "Ogre", "Carnivorous Tree"],
+    
+    'Mountains': ['Mountain Goat', 'Abominable Yeti', 'Alpine Bear'],
+    
+    'Grasslands': ['Hungery Lion', 'Giant Insect', 'Cow'],
+    
+    'Water': ['Hammerhead Shark', 'Vampire Squid', 'Lampray'],
+    
+    'Underground': ['Hunry Giant Mole', 'Giant Earthworm', 'Abyssal Humanoid']
     
     }
     
     # This bit below selects a random monster from the location of the player
       
         
-    all_local_monsters = monster_locations_dict.get(player_location)
+    all_local_monsters = monster_locations_dict.get(location)
     
     monster_type = random.choice(all_local_monsters)
     
@@ -141,7 +149,7 @@ def enemy_stat_calculator():
     
     enemy_stats = {"name": monster_type,
                    "level":enemy_level,
-                   "location": (player_location),
+                   "location": location,
                    "items": items,
                    "personality": personality,
                    "hp": hitpoints,
