@@ -81,3 +81,7 @@ def inventory_edit():
             file.write(game_data)
         
     return output_dic
+
+
+if __name__ == '__main__':
+    print(inventory_edit())

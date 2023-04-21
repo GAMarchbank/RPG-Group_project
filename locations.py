@@ -96,12 +96,11 @@ def create_dungeon() :
     dungeon[1] = generate_location()
     return (dungeon)
 
-# G - Example of the initial dungeon creation 
-dungeon = create_dungeon()
 
-print(dungeon)
-
-# G - Example of the second room in the dungeon being generated
-dungeon[2] = generate_location(False, dungeon[1]['type'], dungeon)
-
-print(dungeon)
+if __name__ == '__main__':
+    # G - Example of the initial dungeon creation 
+    dungeon = create_dungeon()
+    print(dungeon)
+    # G - Example of the second room in the dungeon being generated
+    dungeon[2] = generate_location(False, dungeon[1]['type'], dungeon)
+    print(dungeon)

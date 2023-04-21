@@ -20,7 +20,7 @@ from copy import deepcopy
 # Below is the enemy level calculator. It generates an enemy level in the approximate region of the player's with a rough bell-curve distribution.
 # G - I have left unchanged. possible will need updating as currenlty will break when player level is over 10, maybe tie the random choice list to being directly created by the player level. not importatnt now
 
-def enemy_level_calculator(player_level):
+def enemy_level_calculator(player_level):    
     if player_level == 1:
         enemy_level = 1
     elif player_level >= 2 and player_level <= 3:
@@ -178,3 +178,10 @@ results of the executed enemy_stat_calcualtor.
 """
 
 # G - I have moved this section up to be contained within the function 
+
+
+
+
+if __name__ == '__main__':
+    location = random.choice(['Temperate Woodlands', 'Mountains', 'Wetlands', 'Urban', 'Grasslands', 'Desert', 'Water', 'Underground'])
+    print(enemy_stat_calculator(location))
