@@ -464,7 +464,7 @@ items = [{'name': 'Stone Aroma', 'description': 'A mysterious Blue smell. It is 
 
 effects = [{'name': 'burn', 'description': 'This indiviuals skin in scortched or blistered.', 'effects': {'type': 'damage', 'impact': 5}}, {'name': 'poison', 'description': 'Toxins course though this individuals body.', 'effects': {'type': 'damage', 'impact': 6}}, {'name': 'sleep', 'description': 'This individual is fast asleep.', 'effects': {'type': 'skip_go', 'impact': None}}]
 
-player_data = {'name': 'jeff','level': 1, 'location': 'Desert', 'hp': 10, 'a_p': 10, 'd_p': 40, 's_p': 0, 'aim': 50, 'items': ['Stone Aroma', 'Insignificant Green Spray', 'Invigorating Aroma', 'Smokebomb', 'Purifying Vibes', 'Strengthening Leaf', 'Insignificant Red Mist'], 'attacks': ['Scratch'], 'max_hp': 10}
+player_data = {'name': 'jeff','level': 1, 'xp': 0, 'location': 'Desert', 'hp': 10, 'a_p': 10, 'd_p': 40, 's_p': 0, 'aim': 50, 'items': ['Stone Aroma', 'Insignificant Green Spray', 'Invigorating Aroma', 'Smokebomb', 'Purifying Vibes', 'Strengthening Leaf', 'Insignificant Red Mist'], 'attacks': ['Scratch'], 'max_hp': 10}
 
 ai_personality_types = ['timid', 'aggressive', 'smart', 'resourceful', 'wild', 'average']
 
@@ -479,5 +479,3 @@ with open('game_data.txt', 'w')as file:
 
 with open('player_data.txt', 'w') as file:
     file.write(p_d)
-    
-

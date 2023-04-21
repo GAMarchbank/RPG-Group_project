@@ -7,8 +7,9 @@ from statistics import mean
 
 # this is the class which will be used to run both sides of the combat
 class Battle_Class:
-    def __init__(self, name, hp, ap, dp, sp, aim, items, attacks, max_hp, is_player, level, id_num = 0, personality = 0):
+    def __init__(self, name, xp, hp, ap, dp, sp, aim, items, attacks, max_hp, is_player, level, id_num = 0, personality = 0):
         self.name = name
+        self.xp = xp
         self.current_hp = hp
         self.max_hp = max_hp
         self.ap = ap
@@ -556,7 +557,16 @@ class Battle_Class:
             self.effects_lst.append({'name': effect, 'remaining turns': 3, 'effects': {'type': 'damage', 'impact': 6}})
         elif effect == 'burn':
             self.effects_lst.append({'name': effect, 'remaining turns': 3, 'effects': {'type': 'damage', 'impact': 5}})
-        
+    
+    def item_return_chance(self):
+        ret_lst = []
+        for items in self.items:
+            if random.choice([True, False, False]) == True:
+                ret_lst.append(items)
+        return ret_lst
+    
+    def return_xp(self):
+        return self.xp
         
     
 # here the main body of the code starts
@@ -577,7 +587,7 @@ def combat(enermies_lst):
     with open('player_data.txt', 'r')as file:
         file = file.read()
     player_data = json.loads(file)
-    player = Battle_Class(player_data['name'], player_data['hp'], player_data['a_p'], player_data['d_p'], player_data['s_p'], player_data['aim'], player_data['items'], player_data['attacks'], player_data['max_hp'], True, player_data['level'])
+    player = Battle_Class(player_data['name'], None, player_data['hp'], player_data['a_p'], player_data['d_p'], player_data['s_p'], player_data['aim'], player_data['items'], player_data['attacks'], player_data['max_hp'], True, player_data['level'])
     encounter_class_lst = []
     for enermies in enermies_lst:
         id_num = ''
@@ -585,7 +595,7 @@ def combat(enermies_lst):
         while num < 32:
             id_num = id_num + str(random.randrange(0, 9))
             num +=1
-        encounter_class_lst.append(Battle_Class(enermies['name'], enermies['hp'], enermies['a_p'], enermies['d_p'], enermies['s_p'], enermies['aim'], enermies['items'], enermies['attacks'], enermies['hp'], False, enermies['level'], id_num, enermies['personality']))
+        encounter_class_lst.append(Battle_Class(enermies['name'], enermies['xp'], enermies['hp'], enermies['a_p'], enermies['d_p'], enermies['s_p'], enermies['aim'], enermies['items'], enermies['attacks'], enermies['hp'], False, enermies['level'], id_num, enermies['personality']))
 
     # this is just a bit of fun that alters the intro message depending on the number of enermies that are called into combat
     if len(encounter_class_lst) == 1:
@@ -1063,7 +1073,35 @@ def combat(enermies_lst):
             return True
         elif victory_condition == 'victory':
             print('Player Victorious')
-            # here we would insert loot and exp functions
+            # here in these victory conditions the player has a chance of gaining the items in the enemies inventories and gains the relivent amount of xp per enemy they defeated. 
+            xp_gain = 0
+            items_gain = []
+            for enemies in defeated_enemies:
+                xp_gain += enemies.return_xp()
+                for items in enemies.item_return_chance():
+                    items_gain.append(items)
+            if len(items_gain) == 1:
+                items_gain_str = items_gain[0]
+            elif len(items_gain) == 2:
+                items_gain_str = items_gain[0] + ' and ' + items_gain[1]
+            else:
+                last_index = items_gain.pop()
+                items_gain_str = ''
+                for items in items_gain:
+                    if items == items_gain[-1]:
+                        items_gain_str += items
+                    else:
+                        items_gain_str = items_gain_str + items + ', '
+                items_gain_str += last_index
+            print(f'\nYou have gained {xp_gain}xp.')
+            print(f"\nYou have looted {items_gain_str}.")
+            with open('player_data.txt', 'r')as file:
+                player_data = file.read()
+            player_data = json.loads(player_data)
+            player_data['xp'] += xp_gain
+            player_data['items'].append(items_gain)
+            with open('player_data.txt', 'w')as file:
+                file.write(player_data)
             return True
 
 

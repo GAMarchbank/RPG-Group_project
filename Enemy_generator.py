@@ -139,6 +139,7 @@ def enemy_stat_calculator(location):
 
     enemy_level = enemy_level_calculator(player_level)
     
+    xp = enemy_level * 100
     hitpoints = 5 + enemy_level
     attackpoints = enemy_level
     defencepoints = enemy_level
@@ -149,6 +150,7 @@ def enemy_stat_calculator(location):
     
     enemy_stats = {"name": monster_type,
                    "level":enemy_level,
+                   'xp': xp,
                    "location": location,
                    "items": items,
                    "personality": personality,

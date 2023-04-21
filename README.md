@@ -17,15 +17,12 @@ Fabian Byran
 Justin Grant 
 
 
-
 Things to still be done.
 
 Attack generator
-
 quest generator
-
 full flesh out enemies
-
 Put code together
-
 balence enermy stats
+think about implimenting some kind of usable eqipement
+think about how the terrain might effect play. e.g swamp slows down indiviuals wihtough the correct modifier. 
