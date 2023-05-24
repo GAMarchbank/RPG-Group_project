@@ -100,7 +100,13 @@ def create_dungeon() :
 if __name__ == '__main__':
     # G - Example of the initial dungeon creation 
     dungeon = create_dungeon()
-    print(dungeon)
     # G - Example of the second room in the dungeon being generated
-    dungeon[2] = generate_location(False, dungeon[1]['type'], dungeon)
-    print(dungeon)
+    # dungeon[2] = generate_location(False, dungeon[1]['type'], dungeon)
+    # print(dungeon)
+    for items in dungeon:
+        print(items)
+        try:
+            for obs in dungeon[items]:
+                print(f"{obs}:\t{dungeon[items][obs]}")
+        except Exception:
+            print(dungeon[items])

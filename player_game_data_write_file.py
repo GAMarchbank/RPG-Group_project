@@ -464,18 +464,50 @@ items = [{'name': 'Stone Aroma', 'description': 'A mysterious Blue smell. It is 
 
 effects = [{'name': 'burn', 'description': 'This indiviuals skin in scortched or blistered.', 'effects': {'type': 'damage', 'impact': 5}}, {'name': 'poison', 'description': 'Toxins course though this individuals body.', 'effects': {'type': 'damage', 'impact': 6}}, {'name': 'sleep', 'description': 'This individual is fast asleep.', 'effects': {'type': 'skip_go', 'impact': None}}]
 
-player_data = {'name': 'jeff','level': 1, 'xp': 0, 'location': 'Desert', 'hp': 10, 'a_p': 10, 'd_p': 40, 's_p': 0, 'aim': 50, 'items': ['Stone Aroma', 'Insignificant Green Spray', 'Invigorating Aroma', 'Smokebomb', 'Purifying Vibes', 'Strengthening Leaf', 'Insignificant Red Mist'], 'attacks': ['Scratch'], 'max_hp': 10}
 
 ai_personality_types = ['timid', 'aggressive', 'smart', 'resourceful', 'wild', 'average']
 
 
-game_data = {'attacks': attacks, 'items': items, 'effects': effects, 'personality_types': ai_personality_types, 'enemies': [], 'locations dic': locations_dic}
+game_data = {'attacks': attacks, 'items': items, 'effects': effects, 'personality_types': ai_personality_types, 'enemies': [], 'locations dic': locations_dic, 'dungeon_dic': None, 'player_location': None}
 
-p_d = json.dumps(player_data)
-g_d = json.dumps(game_data)
 
-with open('game_data.txt', 'w')as file:
-    file.write(g_d)
+def new_game():
+    g_d = json.dumps(game_data)
+    with open('game_data.txt', 'w')as file:
+        file.write(g_d)
+    return game_data
 
-with open('player_data.txt', 'w') as file:
-    file.write(p_d)
+
+
+def player_new_game():
+    # edit this so that player data is customisable at the start of new games by players
+    name = input('Please enter a name for your character.')
+    player_data = {'name': name,'level': 1, 'xp': 0, 'location': 'Desert', 'hp': 10, 'a_p': 10, 'd_p': 40, 's_p': 0, 'aim': 50, 'items': ['Stone Aroma', 'Insignificant Green Spray', 'Invigorating Aroma', 'Smokebomb', 'Purifying Vibes', 'Strengthening Leaf', 'Insignificant Red Mist'], 'attacks': ['Scratch'], 'max_hp': 10}
+    p_d = json.dumps(player_data)
+    with open('player_data.txt', 'w') as file:
+        file.write(p_d)
+    return player_data
+
+def load_game_data():
+    with open('game_data.txt', 'r')as file:
+        file = file.read()
+    return file
+
+def load_player_data():
+    with open('player_data.txt', 'r')as file:
+        file = file.read()
+    return file
+
+def save_player_data(data):
+    data = json.dumps(data)
+    with open('player_data.txt', 'w')as file:
+        file.write(data)
+    
+def save_game_data(data):
+    data = json.dumps(data)    
+    with open('game_data.txt', 'w')as file:
+        file.write(data)
+
+if __name__ == '__main__':
+    new_game()
+    player_new_game()
