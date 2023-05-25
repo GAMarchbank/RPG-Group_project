@@ -481,7 +481,7 @@ def new_game():
 
 def player_new_game():
     # edit this so that player data is customisable at the start of new games by players
-    name = input('Please enter a name for your character.')
+    name = input('\nPlease enter a name for your character.')
     player_data = {'name': name,'level': 1, 'xp': 0, 'location': 'Desert', 'hp': 10, 'a_p': 10, 'd_p': 40, 's_p': 0, 'aim': 50, 'items': ['Stone Aroma', 'Insignificant Green Spray', 'Invigorating Aroma', 'Smokebomb', 'Purifying Vibes', 'Strengthening Leaf', 'Insignificant Red Mist'], 'attacks': ['Scratch'], 'max_hp': 10}
     p_d = json.dumps(player_data)
     with open('player_data.txt', 'w') as file:
