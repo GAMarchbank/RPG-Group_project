@@ -628,17 +628,17 @@ def combat(enermies_lst):
                 print(print_hp_stats_bar(entities, encounter_class_lst.index(entities)+1))
         print(f"\n\n---------------\n  Enemy Stats  \n---------------\n")
         for entities in encounter_class_lst:
-            if entities.return_is_plyer() == False:
+            if entities.return_is_plyer() == False and entities.return_hp() > 0:
                 print(print_hp_stats_bar(entities, encounter_class_lst.index(entities)+1))
         # here the combat loop is acted, all combatees class instances are contained in teh list encourter_class_lst. we can call them one at a time, 
         # checking for the is_plyer class variable and use that to checkif the instance is computer controled or player controlled
         for entities in encounter_class_lst:
-            bar = '--------'
-            for characters in entities.return_name():
-                bar = bar + '-'
-            print(f"\n{bar}\n{entities.return_name()}'s turn.\n{bar}\n\n")
-            # the next two lines enact any effects the instance has on it, and apply the skip_go modifier if relivant, they also check the status of the enemy, weather it is alive or has escaped
             if entities.return_status() == 'alive':
+                bar = '--------'
+                for characters in entities.return_name():
+                    bar = bar + '-'
+                print(f"\n{bar}\n{entities.return_name()}'s turn.\n{bar}\n\n")
+                # the next line enact any effects the instance has on it, and apply the skip_go modifier if relivant, they also check the status of the enemy, weather it is alive or has escaped
                 skip_go_indicator = entities.action_events()
             if skip_go_indicator != False and entities.return_status() == 'alive':
                 # here it filters to see if this is the player or an enemy
@@ -938,70 +938,7 @@ def combat(enermies_lst):
                                         else:
                                             print(f"{humans.return_name()} was hit by the {item['name']}")
                                             humans.apply_effect(item['effects']['impact'])
-        
-                                                
-                                                
-                                             
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                    
-                                            
-                                            
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                
+               
 
                         # here the enemy attepts to flee/ contesting its speed with yours. its likelyhood of picking this option depends on its personality
                         elif main_menu_choice == 3:
@@ -1080,7 +1017,9 @@ def combat(enermies_lst):
                 xp_gain += enemies.return_xp()
                 for items in enemies.item_return_chance():
                     items_gain.append(items)
-            if len(items_gain) == 1:
+            if len(items_gain) == 0:
+                items_gain_str = 'no items.'
+            elif len(items_gain) == 1:
                 items_gain_str = items_gain[0]
             elif len(items_gain) == 2:
                 items_gain_str = items_gain[0] + ' and ' + items_gain[1]
@@ -1099,7 +1038,9 @@ def combat(enermies_lst):
                 player_data = file.read()
             player_data = json.loads(player_data)
             player_data['xp'] += xp_gain
-            player_data['items'].append(items_gain)
+            if len(items_gain) != 0:
+                player_data['items'].append(items_gain)
+            player_data = json.dumps(player_data)
             with open('player_data.txt', 'w')as file:
                 file.write(player_data)
             return True

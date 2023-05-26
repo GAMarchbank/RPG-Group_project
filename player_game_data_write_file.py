@@ -491,11 +491,13 @@ def player_new_game():
 def load_game_data():
     with open('game_data.txt', 'r')as file:
         file = file.read()
+    file = json.loads(file)
     return file
 
 def load_player_data():
     with open('player_data.txt', 'r')as file:
         file = file.read()
+    file = json.loads(file)
     return file
 
 def save_player_data(data):

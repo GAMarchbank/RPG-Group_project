@@ -73,11 +73,11 @@ def generate_location(rand = True, location = None, dungeon_dic = None, quest_da
                     enermy_num -=1
             else:
                 enemy_lst = None
-            if random.randrange(0,2) == 1:
+            if random.randrange(0,3) in [1, 2]:
                 item = inventory_edit()
             else:
                 item = None
-            object_dic = {'name': obj, 'enemies': enemy_lst, 'item': item}
+            object_dic = {'name': obj, 'enemies': enemy_lst, 'item': item, 'searched': False}
             room_instance['objects'].append(object_dic)
             object_num -= 1
         return room_instance
@@ -91,9 +91,9 @@ def create_dungeon() :
     dungeon = {}
     i = 1
     while i <= num_of_rooms :
-        dungeon[i] = None
+        dungeon[str(i)] = None
         i += 1
-    dungeon[1] = generate_location()
+    dungeon['1'] = generate_location()
     return (dungeon)
 
 

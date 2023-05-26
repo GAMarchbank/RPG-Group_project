@@ -4,6 +4,7 @@ from player_game_data_write_file import new_game, player_new_game, load_game_dat
 from xp_calc import xp_caclulator
 import time
 import os.path
+from num2words import num2words
 
 
 # the program starts here
@@ -68,7 +69,7 @@ while True:
         print('\nYour jouney begins here...\n')
         time.sleep(2)
         current_dungeon = create_dungeon()
-        game_data['player_location'] = 1
+        game_data['player_location'] = '1'
         game_data['dungeon_dic'] = current_dungeon
         save_game_data(game_data)
         print(f"Our story begins with our main character {player_data['name']} arriving at a {game_data['dungeon_dic'][game_data['player_location']]['name']}.\n")
@@ -79,7 +80,8 @@ name = player_data['name']
 while True:
     # here is the main game play loop. the user is required to observe and interact with two objects minimum to continue to the next room. 
     # this part detects weather this is the final room in the dungeon and defines a variable that will be used to check the number of objects a player has interacted with.
-    # also created a variable that lets the program now if its the first time the user has seen this room. 
+    # also created a variable that lets the program now if its the first time the user has seen this room and a variable the detects if the player has been defeated. 
+    defeat_check = False
     objects_explored_number = 0
     if game_data['player_location'] == list(current_dungeon.keys())[-1]:
         final_room = True
@@ -116,7 +118,7 @@ while True:
         else:
             first_time_in_room = False
         # the menu that the player uses to make choices within the room. 
-        print('\nWhat would you like to do?\n\t1:\tExamine an objects.\n\t2:\tLeave the area.')
+        print('\nWhat would you like to do?\n\t1:\tExamine an object.\n\t2:\tLeave the area.')
         # this while loop prevents the player making any other choices then what is allowed by the room. 
         while True:
             room_choice = input('\nPlease select an option.')
@@ -133,10 +135,65 @@ while True:
         # this section will give menues to allow the player to interact with the objects and doors. 
         # 1 is objects
         if int(room_choice) == 1:
-            pass
+            obj_num = 0
+            print('\nPlease select the object you would like to examine.\n')
+            for obs in current_dungeon[game_data["player_location"]]['objects']:
+                obj_num += 1
+                if obs['searched'] == False:
+                    print(f'\t{obj_num}:\t{obs["name"]}')
+                else:
+                    print(f'\t{obj_num}:\t{obs["name"]}\tAlready examined')
+            print(f"\tb:\tBack.\n")
+            while True:
+                object_choice = input('Your selection?\t')
+                if str(object_choice) != 'b' and str(object_choice) not in list(str(x) for x in range(1, obj_num + 1)):
+                    print('Unrecognised input.')
+                    continue
+                else:
+                    break
+            if object_choice == 'b':
+                continue
+            else:
+                chosen_object = current_dungeon[game_data["player_location"]]['objects'][int(object_choice)-1]
+                print(f'\n{name} approaches the {chosen_object["name"]}...')
+                if chosen_object['enemies'] !=  None:
+                    if len(chosen_object['enemies']) > 1:
+                        print(f'\n{num2words(len(chosen_object["enemies"]))} enemies jump out from behind the {chosen_object["name"]}.')
+                    else:
+                        print(f"\nOne enemy jumps out from behind the {chosen_object['name']}.")
+                    combat_result = combat(chosen_object['enemies'])
+                    if combat_result == False:
+                        defeat_check = True
+                        break
+                    else:
+                        chosen_object['enemies'] = None
+                        xp_caclulator()
+                    player_data = load_player_data()
+                    game_data = load_game_data()
+                    game_data['dungeon_dic'] = current_dungeon
+                    save_game_data(game_data)
+                if chosen_object['item'] != None:
+                    print(f'\nLying on the floor behind the {chosen_object["name"]} {name} finds a {chosen_object["item"]["name"]}. {chosen_object["item"]["description"]}.')
+                    player_data['items'].append(chosen_object['item']['name'])
+                    print(f'\nThe {chosen_object["item"]["name"]} has been added to your inventory.')
+                    save_player_data(player_data)
+                else:
+                    print(f'The ground behind the {chosen_object["name"]} is empty.')
+                chosen_object['searched'] = True
+                game_data = load_game_data()
+                game_data['dungeo_dic'] = current_dungeon
+                save_game_data(game_data)
+                objects_explored_number += 1
         # 2 is doors. 
         else:
-            pass
+            if objects_explored_number < 3:
+                print(f"{name} has not examined the surrounding area enough to move on.")
+                continue
+            else:
+                
+        break
+    if defeat_check == True:
+        print(f"{name}'s adventure has ended in death.")
         break
     break
     
